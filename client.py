@@ -1,142 +1,82 @@
 import socket
 import os
 
-HOST = "127.0.0.1"
+HOST = "0.0.0.0"
 PORT = 2121
 
-CLIENT_FOLDER = "client_files"
+USERNAME = "admin"
+PASSWORD = "1234"
 
-os.makedirs(CLIENT_FOLDER, exist_ok=True)
+SERVER_FOLDER = "server_files"
 
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+os.makedirs(SERVER_FOLDER, exist_ok=True)
 
-client_socket.connect((HOST, PORT))
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-# ---------------- WELCOME ----------------
+server_socket.bind((HOST, PORT))
+server_socket.listen(5)
 
-message = client_socket.recv(1024).decode()
-print("Server:", message)
+print(f"FTP Server started on port {PORT}")
+print("Waiting for client connection...")
 
-# ---------------- USERNAME ----------------
+while True:
+    client_socket, client_address = server_socket.accept()
 
-message = client_socket.recv(1024).decode()
-print("Server:", message)
+    print(f"Client connected: {client_address}")
 
-username = input("Enter username: ")
-client_socket.sendall(username.encode())
+    client_socket.sendall(b"Welcome to Custom FTP Server!\n")
 
-# ---------------- PASSWORD ----------------
+    # ---------------- LOGIN ----------------
 
-message = client_socket.recv(1024).decode()
-print("Server:", message)
+    client_socket.sendall(b"Username: ")
+    username = client_socket.recv(1024).decode().strip()
 
-password = input("Enter password: ")
-client_socket.sendall(password.encode())
+    client_socket.sendall(b"Password: ")
+    password = client_socket.recv(1024).decode().strip()
 
-# ---------------- LOGIN RESULT ----------------
+    if username == USERNAME and password == PASSWORD:
 
-response = client_socket.recv(1024).decode()
-print("Server:", response)
+        client_socket.sendall(b"LOGIN_SUCCESS\n")
+        print(f"User '{username}' logged in successfully.")
 
-if "LOGIN_SUCCESS" in response:
+        client_socket.sendall(
+            b"Enter command (LIST / UPLOAD / DOWNLOAD / QUIT): "
+        )
 
-    # ---------------- COMMAND ----------------
+        command = client_socket.recv(1024).decode().strip().upper()
 
-    message = client_socket.recv(1024).decode()
-    print("Server:", message)
+        # ---------------- LIST ----------------
 
-    command = input("Enter command: ").strip().upper()
-    client_socket.sendall(command.encode())
+        if command == "LIST":
 
-    # ---------------- LIST ----------------
+            files = os.listdir(SERVER_FOLDER)
 
-    if command == "LIST":
+            if files:
+                response = "Files on server:\n"
+                response += "\n".join(files)
+            else:
+                response = "Server folder is empty."
 
-        response = client_socket.recv(4096).decode()
-        print(response)
+            client_socket.sendall(response.encode())
 
-    # ---------------- UPLOAD ----------------
+        # ---------------- UPLOAD ----------------
 
-    elif command == "UPLOAD":
+        elif command == "UPLOAD":
 
-        message = client_socket.recv(1024).decode()
-        print("Server:", message)
+            client_socket.sendall(b"Enter filename: ")
 
-        filename = input("Enter filename: ").strip()
+            filename = client_socket.recv(1024).decode().strip()
 
-        filepath = os.path.join(CLIENT_FOLDER, filename)
+            filepath = os.path.join(SERVER_FOLDER, filename)
 
-        if not os.path.exists(filepath):
+            client_socket.sendall(b"READY\n")
 
-            print("File not found:", filepath)
+            # Receive file size
+            file_size_data = client_socket.recv(1024).decode().strip()
+            file_size = int(file_size_data)
 
-        else:
-
-            client_socket.sendall(filename.encode())
-
-            response = client_socket.recv(1024).decode()
-            print("Server:", response)
-
-            if "READY" in response:
-
-                file_size = os.path.getsize(filepath)
-
-                # Send file size
-                client_socket.sendall(
-                    str(file_size).encode()
-                )
-
-                # Send file data
-                with open(filepath, "rb") as file:
-
-                    while True:
-
-                        data = file.read(4096)
-
-                        if not data:
-                            break
-
-                        client_socket.sendall(data)
-
-                response = client_socket.recv(1024).decode()
-                print("Server:", response)
-
-    # ---------------- DOWNLOAD ----------------
-
-    elif command == "DOWNLOAD":
-
-        message = client_socket.recv(1024).decode()
-        print("Server:", message)
-
-        filename = input("Enter filename: ").strip()
-
-        # Send filename
-        client_socket.sendall(filename.encode())
-
-        response = client_socket.recv(1024).decode()
-
-        # File not found
-        if response == "FILE_NOT_FOUND":
-
-            print("Server: File not found.")
-
-        # File found
-        elif response.startswith("FILE_SIZE:"):
-
-            file_size = int(
-                response.split(":")[1]
-            )
-
-            print(f"File size: {file_size} bytes")
-
-            # Tell server we are ready
-            client_socket.sendall(b"READY")
-
-            filepath = os.path.join(
-                CLIENT_FOLDER,
-                filename
-            )
-
+            # Receive file data
             received = 0
 
             with open(filepath, "wb") as file:
@@ -155,31 +95,73 @@ if "LOGIN_SUCCESS" in response:
 
             if received == file_size:
 
-                print(
-                    f"DOWNLOAD_SUCCESS: {filename}"
-                )
+                client_socket.sendall(b"UPLOAD_SUCCESS\n")
+                print(f"File uploaded successfully: {filename}")
 
             else:
 
-                print("DOWNLOAD_FAILED")
+                client_socket.sendall(b"UPLOAD_FAILED\n")
+                print(f"File upload failed: {filename}")
 
-    # ---------------- QUIT ----------------
+        # ---------------- DOWNLOAD ----------------
 
-    elif command == "QUIT":
+        elif command == "DOWNLOAD":
 
-        response = client_socket.recv(1024).decode()
-        print("Server:", response)
+            client_socket.sendall(b"Enter filename: ")
 
-    # ---------------- INVALID COMMAND ----------------
+            filename = client_socket.recv(1024).decode().strip()
+
+            filepath = os.path.join(SERVER_FOLDER, filename)
+
+            if not os.path.isfile(filepath):
+
+                client_socket.sendall(b"FILE_NOT_FOUND\n")
+                print(f"File not found: {filename}")
+
+            else:
+
+                file_size = os.path.getsize(filepath)
+
+                # Send file size
+                client_socket.sendall(
+                    f"FILE_SIZE:{file_size}".encode()
+                )
+
+                # Wait for client confirmation
+                response = client_socket.recv(1024).decode().strip()
+
+                if response == "READY":
+
+                    with open(filepath, "rb") as file:
+
+                        while True:
+
+                            data = file.read(4096)
+
+                            if not data:
+                                break
+
+                            client_socket.sendall(data)
+
+                    print(f"File downloaded: {filename}")
+
+        # ---------------- QUIT ----------------
+
+        elif command == "QUIT":
+
+            client_socket.sendall(b"Goodbye!\n")
+
+        # ---------------- INVALID COMMAND ----------------
+
+        else:
+
+            client_socket.sendall(b"Invalid command.\n")
+
+    # ---------------- LOGIN FAILED ----------------
 
     else:
 
-        response = client_socket.recv(1024).decode()
-        print("Server:", response)
+        client_socket.sendall(b"LOGIN_FAILED\n")
+        print(f"Login failed for user '{username}'.")
 
-else:
-
-    print("Access denied. Invalid username or password.")
-
-
-client_socket.close()
+    client_socket.close()
