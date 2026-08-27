@@ -21,4 +21,14 @@ client_socket.sendall(password.encode())
 response = client_socket.recv(1024).decode()
 print("Server:", response)
 
+if "LOGIN_SUCCESS" in response:
+    command_message = client_socket.recv(1024).decode()
+    print("Server:", command_message)
+
+    command = input("Enter command: ")
+    client_socket.sendall(command.encode())
+
+    response = client_socket.recv(4096).decode()
+    print(response)
+
 client_socket.close()
