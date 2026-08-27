@@ -1,106 +1,228 @@
-# Custom FTP Server Using Socket Programming
+# 🚀 Custom FTP Server Using Socket Programming
 
-## Project Overview
+<p align="center">
 
-This project implements a simple **Custom FTP Server and Client** using **Python Socket Programming**. The system uses TCP sockets to establish communication between a client and a server.
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=26&duration=3000&pause=1000&color=36BCF7&center=true&vCenter=true&width=800&lines=Custom+FTP+Server;Socket+Programming+with+Python;TCP+Client-Server+File+Transfer;Upload+%7C+Download+%7C+List" alt="Typing Animation" />
 
-The project provides basic file transfer functionality, including user authentication, listing files, uploading files from the client to the server, and downloading files from the server to the client.
+</p>
 
-This project is developed as part of a **Socket Programming Homework**.
+<p align="center">
+  <b>A simple, custom FTP-like file transfer system built with Python TCP sockets.</b>
+</p>
 
----
+<p align="center">
 
-## Features
+![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python\&logoColor=white)
+![Socket](https://img.shields.io/badge/Networking-TCP%20Sockets-orange)
+![Protocol](https://img.shields.io/badge/Protocol-Custom%20FTP-purple)
+![Status](https://img.shields.io/badge/Status-Completed-success)
 
-The Custom FTP Server supports the following features:
-
-* TCP socket-based client-server communication
-* Username and password authentication
-* List files available on the server
-* Upload files from client to server
-* Download files from server to client
-* Quit and close the connection
-* File transfer using file size-based transmission
-* Support for text and binary files
+</p>
 
 ---
 
-## Technologies Used
+## 🌐 Project Overview
 
-* **Programming Language:** Python 3
-* **Networking:** TCP Socket Programming
-* **Libraries:**
+**Custom FTP Server Using Socket Programming** is a lightweight client-server file transfer system developed using **Python TCP socket programming**.
 
-  * `socket`
-  * `os`
+The project demonstrates how a reliable file transfer application can be built from the ground up without using external FTP libraries.
+
+The system provides basic FTP-like operations such as:
+
+* 🔐 User authentication
+* 📂 File listing
+* ⬆️ File upload
+* ⬇️ File download
+* 🚪 Connection termination
+
+The main goal of this project is to understand **TCP socket communication, client-server architecture, authentication, and reliable file transmission**.
+
+---
+
+## ✨ Features
+
+| Feature               | Description                                                  |
+| --------------------- | ------------------------------------------------------------ |
+| 🔌 TCP Connection     | Establishes reliable communication between client and server |
+| 🔐 Authentication     | Username and password based login                            |
+| 📋 LIST               | Displays files available on the server                       |
+| ⬆️ UPLOAD             | Transfers files from client to server                        |
+| ⬇️ DOWNLOAD           | Transfers files from server to client                        |
+| 🚪 QUIT               | Closes the client-server connection                          |
+| 📦 Binary Transfer    | Supports text and binary files                               |
+| 📏 File Size Protocol | Uses file size to control reliable file transmission         |
+
+---
+
+## 🛠️ Technologies Used
+
+### Programming Language
+
+🐍 **Python 3**
+
+### Networking
+
+🌐 **TCP Socket Programming**
+
+### Built-in Libraries
+
+```text
+socket
+os
+```
 
 No external Python packages are required.
 
 ---
 
-## Project Structure
+## 🏗️ System Architecture
+
+```text
+                     TCP CONNECTION
+                           │
+                           ▼
+              ┌────────────────────────┐
+              │      CUSTOM FTP        │
+              │         SYSTEM         │
+              └────────────────────────┘
+                    ▲             ▲
+                    │             │
+             Commands          File Data
+                    │             │
+                    │             │
+          ┌─────────┴───┐     ┌───┴─────────┐
+          │             │     │             │
+          │   CLIENT    │◄───►│   SERVER    │
+          │             │     │             │
+          └─────────────┘     └─────────────┘
+                 │                   │
+                 ▼                   ▼
+          client_files/       server_files/
+```
+
+---
+
+## 🔄 How It Works
+
+The communication follows a simple sequence:
+
+```text
+        ┌───────────────┐
+        │ Start Server  │
+        └───────┬───────┘
+                │
+                ▼
+        ┌───────────────┐
+        │ Start Client  │
+        └───────┬───────┘
+                │
+                ▼
+        ┌───────────────┐
+        │ TCP Connect   │
+        └───────┬───────┘
+                │
+                ▼
+        ┌───────────────┐
+        │ Authentication│
+        └───────┬───────┘
+                │
+                ▼
+        ┌─────────────────────┐
+        │ Select FTP Command  │
+        └───────┬─────────────┘
+                │
+        ┌───────┼───────────────┐
+        ▼       ▼       ▼       ▼
+      LIST    UPLOAD DOWNLOAD  QUIT
+        │       │       │       │
+        ▼       ▼       ▼       ▼
+      Files   Client   Server  Close
+              →Server  →Client
+```
+
+---
+
+## 📁 Project Structure
 
 ```text
 Custom-Ftp-Server-Socket/
 │
-├── server.py
-├── client.py
-├── README.md
+├── 📄 server.py
+├── 📄 client.py
+├── 📄 README.md
 │
-├── client_files/
+├── 📂 client_files/
 │   └── upload_file.txt
 │
-└── server_files/
+└── 📂 server_files/
     ├── sample.jpeg
     ├── sample.txt
     ├── some useful link.pdf
     └── upload_file.txt
 ```
 
-### File Description
+### `server.py`
 
-**`server.py`**
-Contains the FTP server implementation. It handles client connections, authentication, file listing, file uploading, and file downloading.
+Responsible for:
 
-**`client.py`**
-Contains the FTP client implementation. It connects to the server and allows the user to perform FTP operations.
+* Creating the TCP server
+* Accepting client connections
+* Authentication
+* Processing commands
+* Listing server files
+* Receiving uploaded files
+* Sending downloaded files
 
-**`server_files/`**
-Stores files available on the server.
+### `client.py`
 
-**`client_files/`**
-Stores files on the client side. Uploaded and downloaded files are handled through this folder.
+Responsible for:
 
-**`README.md`**
-Contains project information and instructions for running and using the system.
+* Connecting to the server
+* Sending login credentials
+* Sending FTP commands
+* Uploading files
+* Downloading files
+* Displaying server responses
+
+### `client_files/`
+
+Stores files available on the client side.
+
+### `server_files/`
+
+Stores files available on the server side.
 
 ---
 
-## Requirements
+## ⚙️ Requirements
 
-Make sure Python 3 is installed on your computer.
+Before running the project, make sure **Python 3** is installed.
 
-You can check the Python version using:
+Check your Python version:
 
 ```bash
 python --version
 ```
 
-No additional packages need to be installed because the project uses Python's built-in libraries.
+Example:
+
+```text
+Python 3.12.x
+```
+
+No additional packages are required.
 
 ---
 
-## How to Run the Project
+## 🚀 Getting Started
 
-### Step 1: Clone the Repository
-
-Clone this repository from GitHub:
+### 1. Clone the Repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone https://github.com/Marianushrat/Custom-Ftp-Server-Socket.git
 ```
 
-Then enter the project directory:
+Move into the project directory:
 
 ```bash
 cd Custom-Ftp-Server-Socket
@@ -108,7 +230,7 @@ cd Custom-Ftp-Server-Socket
 
 ---
 
-### Step 2: Start the Server
+### 2. Start the Server
 
 Open a terminal and run:
 
@@ -116,49 +238,45 @@ Open a terminal and run:
 python server.py
 ```
 
-You should see:
+Expected output:
 
 ```text
 FTP Server started on port 2121
 Waiting for client connection...
 ```
 
-The server is now ready to accept client connections.
-
 ---
 
-### Step 3: Start the Client
+### 3. Start the Client
 
-Open another terminal in the same project directory and run:
+Open another terminal in the project directory:
 
 ```bash
 python client.py
 ```
 
-The client will connect to the FTP server.
+The client will connect to the server.
 
 ---
 
-## Login Information
+## 🔐 Login Credentials
 
-For testing purposes, the default login credentials are:
+For testing purposes, the project currently uses:
 
 ```text
 Username: admin
 Password: 1234
 ```
 
-The client must provide the correct username and password before accessing the FTP commands.
+After successful authentication, the client can access the available commands.
 
 ---
 
-## Available Commands
+# 💻 Available Commands
 
-After successful login, the following commands are available:
+## 📋 1. LIST
 
-### 1. LIST
-
-The `LIST` command displays the files stored in the server's `server_files` directory.
+Displays all files stored inside the server's `server_files` directory.
 
 Example:
 
@@ -173,14 +291,25 @@ some useful link.pdf
 
 ---
 
-### 2. UPLOAD
+## ⬆️ 2. UPLOAD
 
-The `UPLOAD` command transfers a file from the client's `client_files` directory to the server's `server_files` directory.
+Uploads a file from:
+
+```text
+client_files/
+```
+
+to:
+
+```text
+server_files/
+```
 
 Example:
 
 ```text
 Enter command: UPLOAD
+
 Server: Enter filename:
 Enter filename: upload_file.txt
 
@@ -188,22 +317,37 @@ Server: READY
 Server: UPLOAD_SUCCESS
 ```
 
-After a successful upload, the file will appear in:
+After successful upload:
 
 ```text
+client_files/
+      │
+      │
+      ▼
 server_files/
 ```
 
 ---
 
-### 3. DOWNLOAD
+## ⬇️ 3. DOWNLOAD
 
-The `DOWNLOAD` command transfers a file from the server's `server_files` directory to the client's `client_files` directory.
+Downloads a file from:
+
+```text
+server_files/
+```
+
+to:
+
+```text
+client_files/
+```
 
 Example:
 
 ```text
 Enter command: DOWNLOAD
+
 Server: Enter filename:
 Enter filename: sample.txt
 
@@ -211,7 +355,7 @@ File size: 45 bytes
 DOWNLOAD_SUCCESS: sample.txt
 ```
 
-After a successful download, the file will appear in:
+The downloaded file will be saved inside:
 
 ```text
 client_files/
@@ -219,108 +363,158 @@ client_files/
 
 ---
 
-### 4. QUIT
+## 🚪 4. QUIT
 
-The `QUIT` command closes the current client-server connection.
+Closes the current connection.
 
 Example:
 
 ```text
 Enter command: QUIT
+
 Server: Goodbye!
 ```
 
 ---
 
-## Communication Architecture
+# 📦 File Transfer Protocol
 
-The project follows a client-server architecture:
+This project uses a **file-size-based transmission method** instead of relying on a special end-of-file marker.
+
+### Upload Process
 
 ```text
-             TCP Connection
-      ┌────────────────────────┐
-      │                        │
-      ▼                        │
-┌─────────────┐          ┌─────────────┐
-│    Client   │          │    Server   │
-│             │          │             │
-│   Login     │─────────►│ Authentication
-│   LIST      │─────────►│ File Listing
-│   UPLOAD    │─────────►│ File Storage
-│   DOWNLOAD  │◄─────────│ File Transfer
-│   QUIT      │─────────►│ Connection
-└─────────────┘          └─────────────┘
+Client                         Server
+  │                              │
+  │──── UPLOAD ────────────────►│
+  │──── Filename ──────────────►│
+  │◄──── READY ─────────────────│
+  │──── File Size ─────────────►│
+  │──── File Data ─────────────►│
+  │◄──── UPLOAD_SUCCESS ────────│
+  │                              │
 ```
 
-The client and server communicate using **TCP sockets**. TCP provides reliable and ordered delivery of data during file transfer.
+### Download Process
+
+```text
+Client                         Server
+  │                              │
+  │──── DOWNLOAD ──────────────►│
+  │──── Filename ──────────────►│
+  │◄──── File Size ─────────────│
+  │──── READY ─────────────────►│
+  │◄──── File Data ─────────────│
+  │                              │
+  │   File saved locally         │
+```
+
+Using the file size allows the receiver to determine exactly how many bytes should be received.
 
 ---
 
-## File Transfer Method
+# 🧪 Testing
 
-The project uses a **file-size-based transmission method**.
+The following operations were tested during development:
 
-For uploading:
-
-1. The client sends the filename.
-2. The server confirms that it is ready.
-3. The client sends the file size.
-4. The client sends the file data in chunks.
-5. The server receives the specified number of bytes.
-6. The server sends an upload success message.
-
-For downloading:
-
-1. The client requests a filename.
-2. The server checks whether the file exists.
-3. The server sends the file size.
-4. The client confirms that it is ready.
-5. The server sends the file data in chunks.
-6. The client saves the received file.
-
-This approach allows both text and binary files to be transferred.
+| Test                    | Result |
+| ----------------------- | :----: |
+| TCP connection          |    ✅   |
+| Username authentication |    ✅   |
+| Password authentication |    ✅   |
+| LIST command            |    ✅   |
+| UPLOAD command          |    ✅   |
+| DOWNLOAD command        |    ✅   |
+| QUIT command            |    ✅   |
+| Text file transfer      |    ✅   |
+| Binary file transfer    |    ✅   |
 
 ---
 
-## Testing
+# 🎯 Learning Objectives
 
-The following operations were tested:
+This project demonstrates practical concepts of:
 
-| Operation           | Status     |
-| ------------------- | ---------- |
-| TCP Connection      | Successful |
-| User Authentication | Successful |
-| LIST                | Successful |
-| UPLOAD              | Successful |
-| DOWNLOAD            | Successful |
-| QUIT                | Successful |
+* TCP socket creation
+* Client-server communication
+* IP address and port binding
+* TCP connection establishment
+* Authentication
+* Network data transmission
+* File handling
+* Binary file transfer
+* Client-server protocol design
+* Reliable data transfer using file size
 
 ---
 
-## Limitations
+# ⚠️ Limitations
 
-This is an educational implementation of a custom FTP-like system and is not intended to replace the standard FTP protocol.
+This project is designed for **educational purposes** and is not intended to replace the standard FTP protocol.
 
 Current limitations include:
 
-* Single command operation per client connection
 * Basic username/password authentication
 * No encryption
-* No multiple simultaneous client handling
-* No advanced FTP features such as directory navigation
+* No TLS/SSL
+* One main command per client connection
+* No advanced FTP directory navigation
+* No multi-user account management
+* No anonymous login
+* No production-level security
 
 ---
 
-## Conclusion
+# 🔮 Future Improvements
 
-The project demonstrates how **TCP socket programming** can be used to build a basic client-server file transfer system.
+Possible future enhancements include:
 
-The implemented system provides authentication and essential file management operations such as listing, uploading, and downloading files. It also demonstrates reliable file transmission between a client and server using Python sockets.
+* 👥 Multiple simultaneous clients using threading
+* 🔒 Encrypted communication using TLS
+* 👤 Multiple user accounts
+* 📁 Directory navigation
+* 🗑️ File deletion
+* 🔄 Persistent client sessions
+* 📊 Transfer progress indicator
+* 📝 Server logging system
+* 🛡️ Improved authentication and authorization
 
 ---
 
-## Author
+# 👩‍💻 Author
 
-**Student Name:** Maria Nushrat Mahia
-**Project:** Custom FTP Server Using Socket Programming
-**Language:** Python
+<p align="center">
+
+### Maria Nushrat Mahia
+
+**Socket Programming Homework Project**
+
+</p>
+
+<p align="center">
+
+<a href="https://github.com/Marianushrat">
+<img src="https://img.shields.io/badge/GitHub-Maria%20Nushrat%20Mahia-black?logo=github" alt="GitHub"/>
+</a>
+
+</p>
+
+---
+
+# 📌 Repository
+
+🔗 **GitHub Repository**
+
+https://github.com/Marianushrat/Custom-Ftp-Server-Socket
+
+---
+
+## ⭐ Project Summary
+
+> A custom FTP-like file transfer system developed with Python TCP Socket Programming, supporting authentication, file listing, upload, download, and connection management.
+
+<p align="center">
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=20&duration=3500&pause=800&color=8B5CF6&center=true&vCenter=true&width=700&lines=Built+with+Python+%F0%9F%90%8D;Powered+by+TCP+Sockets+%F0%9F%8C%90;Client+%E2%86%94+Server+File+Transfer+%F0%9F%93%A1;Thanks+for+visiting!+%E2%9C%A8" alt="Animated Footer" />
+
+</p>
