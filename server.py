@@ -1,10 +1,15 @@
 import socket
+import os
 
 HOST = "0.0.0.0"
 PORT = 2121
 
 USERNAME = "admin"
 PASSWORD = "1234"
+
+SERVER_FOLDER = "server_files"
+
+os.makedirs(SERVER_FOLDER, exist_ok=True)
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind((HOST, PORT))
@@ -29,6 +34,30 @@ while True:
     if username == USERNAME and password == PASSWORD:
         client_socket.sendall(b"LOGIN_SUCCESS\n")
         print(f"User '{username}' logged in successfully.")
+
+        client_socket.sendall(
+            b"Enter command (LIST / QUIT): "
+        )
+
+        command = client_socket.recv(1024).decode().strip().upper()
+
+        if command == "LIST":
+            files = os.listdir(SERVER_FOLDER)
+
+            if files:
+                file_list = "\n".join(files)
+                response = f"Files on server:\n{file_list}\n"
+            else:
+                response = "Server folder is empty.\n"
+
+            client_socket.sendall(response.encode())
+
+        elif command == "QUIT":
+            client_socket.sendall(b"Goodbye!\n")
+
+        else:
+            client_socket.sendall(b"Invalid command.\n")
+
     else:
         client_socket.sendall(b"LOGIN_FAILED\n")
         print(f"Login failed for user '{username}'.")
